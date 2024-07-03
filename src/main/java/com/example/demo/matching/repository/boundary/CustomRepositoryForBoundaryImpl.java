@@ -3,6 +3,7 @@ package com.example.demo.matching.repository.boundary;
 import com.example.demo.entity.Matching;
 import com.example.demo.matching.dto.LocationDto;
 import com.example.demo.matching.repository.BaseCustomRepository;
+import com.example.demo.type.RecruitStatus;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringTemplate;
@@ -12,6 +13,8 @@ import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
 
 import static com.example.demo.entity.QMatching.matching;
 
@@ -36,6 +39,8 @@ public class CustomRepositoryForBoundaryImpl extends BaseCustomRepository implem
 
     private BooleanExpression within(Double latLowerBound, Double latUpperBound, Double lonLeftBound, Double lonRightBound) {
         return matching.lat.between(latLowerBound, latUpperBound)
-                .and(matching.lon.between(lonLeftBound, lonRightBound));
+                .and(matching.lon.between(lonLeftBound, lonRightBound))
+                .and(matching.recruitStatus.eq(RecruitStatus.OPEN))
+                .and(matching.recruitDueDateTime.after(LocalDateTime.now()));
     }
 }
